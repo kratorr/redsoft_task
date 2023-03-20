@@ -14,22 +14,42 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 
 from rest_framework.routers import DefaultRouter
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
-from api.views import ClientViewSet, PhotoViewSet, WeatherView
+from api.views import ClientViewSet, WeatherView
 
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Snippets API",
+      default_version='v1',
+      description="Test description",
+      terms_of_service="https://www.google.com/policies/terms/",
+      contact=openapi.Contact(email="contact@snippets.local"),
+      license=openapi.License(name="BSD License"),
+   ),
+   public=True,
+   permission_classes=[permissions.AllowAny],
+)
 
 router = DefaultRouter()
 router.register(r'client', ClientViewSet, basename='client')
-router.register(r'photo', PhotoViewSet, basename='photo')
-router.register(r'weath', WeatherView, basename='weather')
+#router.register(r'weather', WeatherView, basename='weather')
+
 
 urlpatterns = [
+    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    re_path(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('admin/', admin.site.urls),
     path('api-auth/', include('auth.urls')),
-    path('api/', include(router.urls))
+    path('api/', include(router.urls)),
+    path('api/weather/', WeatherView.as_view())
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

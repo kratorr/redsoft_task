@@ -1,22 +1,13 @@
 from django.shortcuts import render
 
-# Create your views here.
-# 2. Создать API, с 4-мя методами:
-# -- Позволяет получить список всех клиентов (фото, дата рождения, пол,
-# имя, фамилия)
-# -- Позволяет добавить нового клиента (фото, дату рождения, пол, имя,
-# фамилию)
-# -- Позволяет изменить клиента (фото, дату рождения, пол, имя, фамилию)
-# -- Позволяет удалить клиента
-# Загрузка фото должна осуществляться с возможностью его обрезать под
-# размер перед сохранением на сервер. Модели с фото и с основными данными
-# пользователя должны быть разными моделями.
-# 3. Создать api регистрации клиента.
 
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import mixins, generics
+from django.views.decorators.csrf import csrf_exempt
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 from api.models import Client, Photo
 from api.serializers import ClientSerializer, PhotoSerializer
@@ -29,27 +20,40 @@ from api.serializers import ClientSerializer, PhotoSerializer
 #         serializer = ClientSerializer(queryset, many=True)
 #         return Response(serializer.data)
 
-class ClientViewSet(viewsets.ModelViewSet):
+# class ClientViewSet(viewsets.ModelViewSet):
+
+#     serializer_class = ClientSerializer
+#     queryset = Client.objects.all()
+
+
+class ClientViewSet(viewsets.GenericViewSet,
+                    mixins.ListModelMixin,
+                    mixins.DestroyModelMixin,
+                    mixins.CreateModelMixin,
+                    mixins.UpdateModelMixin
+                    ):
 
     serializer_class = ClientSerializer
     queryset = Client.objects.all()
 
 
-class PhotoViewSet(viewsets.ViewSet):
-    def list(self, request):
-        queryset = Photo.objects.all()
-        serializer = PhotoSerializer(queryset, many=True)
-        return Response(serializer.data)
+class WeatherView(APIView):
+    """Get weather by city and date"""
 
-
-class WeatherView(mixins.ListModelMixin, generics.GenericAPIView):
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter('city', openapi.IN_QUERY, required=True, type=openapi.TYPE_STRING),
+        openapi.Parameter('date', openapi.IN_QUERY, required=True, type=openapi.FORMAT_DATE)
+        ]
+     )
     def get(self, request):
         # по хорошему вытащить в отдельный код
         url = 'https://wttr.in/Moscow'
         #date = '2021-10-20' # Дата в формате ГГГГ-ММ-ДД
+        city = self.request.query_params.get('city')
+        date = self.requet.query
 
-        response = requests.get(f'{url}/')
-     #   response = requests.get(f'{url}/{date}')
+      #  response = requests.get(f'{url}/')
+        response = requests.get(f'{url}/city={city}&date={date}')
         if response.status_code == 200:
             data = response.text
             print(data)
