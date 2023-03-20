@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'rest_framework',
     'rest_framework_simplejwt',
-    'drf_yasg',
+   # 'drf_yasg',
+   'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -59,7 +60,8 @@ ROOT_URLCONF = 'redsoft.urls'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ]
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema'
 }
 
 TEMPLATES = [
@@ -132,3 +134,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+OPENWEATHER_KEY=''
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Red Soft test API',
+    'DESCRIPTION': 'Your project description',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
+}

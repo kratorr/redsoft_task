@@ -36,3 +36,7 @@ class ClientSerializer(serializers.ModelSerializer):
     #     photo_obj, _ = Photo.objects.get_or_404(**photo)
     #     instance = Client.objects.update(photo=photo_obj, **validated_data)
     #     return instance
+
+
+class WeatherSerializer(serializers.Serializer):
+    pass
