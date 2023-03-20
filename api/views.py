@@ -9,6 +9,8 @@ from django.views.decorators.csrf import csrf_exempt
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+import requests
+
 from api.models import Client, Photo
 from api.serializers import ClientSerializer, PhotoSerializer
 
@@ -47,13 +49,15 @@ class WeatherView(APIView):
      )
     def get(self, request):
         # по хорошему вытащить в отдельный код
-        url = 'https://wttr.in/Moscow'
+        url = 'https://wttr.in/'
         #date = '2021-10-20' # Дата в формате ГГГГ-ММ-ДД
         city = self.request.query_params.get('city')
-        date = self.requet.query
-
+        date = self.request.query_params.get('date')
+        req = f'{url}/city={city}&date={date}&format=j1'
+        print(req)
       #  response = requests.get(f'{url}/')
-        response = requests.get(f'{url}/city={city}&date={date}')
+        response = requests.get(req)
+        print(response)
         if response.status_code == 200:
             data = response.text
             print(data)
