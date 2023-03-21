@@ -135,12 +135,12 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-OPENWEATHER_KEY=''
+OPENWEATHER_KEY='d8bd7d1abc8c7002fc3019beaef02bab'
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Red Soft test API',
+    'TITLE': 'API',
     'DESCRIPTION': 'Your project description',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
-    # OTHER SETTINGS
+    'COMPONENT_SPLIT_REQUEST': True,
 }

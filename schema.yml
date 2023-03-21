@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Your Project API
+  title: API
   version: 1.0.0
   description: Your project description
 paths:
@@ -16,13 +16,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TokenObtainPair'
+              $ref: '#/components/schemas/TokenObtainPairRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/TokenObtainPair'
+              $ref: '#/components/schemas/TokenObtainPairRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/TokenObtainPair'
+              $ref: '#/components/schemas/TokenObtainPairRequest'
         required: true
       responses:
         '200':
@@ -43,13 +43,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TokenRefresh'
+              $ref: '#/components/schemas/TokenRefreshRequest'
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/TokenRefresh'
+              $ref: '#/components/schemas/TokenRefreshRequest'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/TokenRefresh'
+              $ref: '#/components/schemas/TokenRefreshRequest'
         required: true
       responses:
         '200':
@@ -65,6 +65,7 @@ paths:
       - api
       security:
       - jwtAuth: []
+      - {}
       responses:
         '200':
           content:
@@ -80,18 +81,13 @@ paths:
       - api
       requestBody:
         content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Client'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Client'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Client'
+              $ref: '#/components/schemas/ClientRequest'
         required: true
       security:
       - jwtAuth: []
+      - {}
       responses:
         '201':
           content:
@@ -113,18 +109,13 @@ paths:
       - api
       requestBody:
         content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Client'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Client'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Client'
+              $ref: '#/components/schemas/ClientRequest'
         required: true
       security:
       - jwtAuth: []
+      - {}
       responses:
         '200':
           content:
@@ -145,17 +136,12 @@ paths:
       - api
       requestBody:
         content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedClient'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedClient'
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedClient'
+              $ref: '#/components/schemas/PatchedClientRequest'
       security:
       - jwtAuth: []
+      - {}
       responses:
         '200':
           content:
@@ -176,6 +162,7 @@ paths:
       - api
       security:
       - jwtAuth: []
+      - {}
       responses:
         '204':
           description: No response body
@@ -185,10 +172,14 @@ paths:
       description: Get weather by city and date
       parameters:
       - in: query
-        name: queryparam1
+        name: city
         schema:
           type: string
-          format: uuid
+      - in: query
+        name: date
+        schema:
+          type: string
+          format: date
       tags:
       - api
       security:
@@ -196,7 +187,11 @@ paths:
       - {}
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Weather'
+          description: ''
 components:
   schemas:
     Client:
@@ -225,17 +220,16 @@ components:
       - last_name
       - photo
       - sex
-    PatchedClient:
+    ClientRequest:
       type: object
       properties:
-        id:
-          type: integer
-          readOnly: true
         first_name:
           type: string
+          minLength: 1
           maxLength: 50
         last_name:
           type: string
+          minLength: 1
           maxLength: 50
         sex:
           $ref: '#/components/schemas/SexEnum'
@@ -243,18 +237,47 @@ components:
           type: string
           format: date
         photo:
-          $ref: '#/components/schemas/Photo'
+          $ref: '#/components/schemas/PhotoRequest'
+      required:
+      - birthday
+      - first_name
+      - last_name
+      - photo
+      - sex
+    PatchedClientRequest:
+      type: object
+      properties:
+        first_name:
+          type: string
+          minLength: 1
+          maxLength: 50
+        last_name:
+          type: string
+          minLength: 1
+          maxLength: 50
+        sex:
+          $ref: '#/components/schemas/SexEnum'
+        birthday:
+          type: string
+          format: date
+        photo:
+          $ref: '#/components/schemas/PhotoRequest'
     Photo:
       type: object
       properties:
-        id:
-          type: integer
-          readOnly: true
         image:
           type: string
           format: uri
       required:
-      - id
+      - image
+    PhotoRequest:
+      type: object
+      properties:
+        image:
+          type: string
+          format: binary
+      required:
+      - image
     SexEnum:
       enum:
       - M
@@ -266,12 +289,6 @@ components:
     TokenObtainPair:
       type: object
       properties:
-        username:
-          type: string
-          writeOnly: true
-        password:
-          type: string
-          writeOnly: true
         access:
           type: string
           readOnly: true
@@ -280,8 +297,20 @@ components:
           readOnly: true
       required:
       - access
-      - password
       - refresh
+    TokenObtainPairRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+          minLength: 1
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - password
       - username
     TokenRefresh:
       type: object
@@ -289,12 +318,28 @@ components:
         access:
           type: string
           readOnly: true
+      required:
+      - access
+    TokenRefreshRequest:
+      type: object
+      properties:
         refresh:
           type: string
           writeOnly: true
+          minLength: 1
       required:
-      - access
       - refresh
+    Weather:
+      type: object
+      properties:
+        city:
+          type: string
+        date:
+          type: string
+          format: date
+      required:
+      - city
+      - date
   securitySchemes:
     jwtAuth:
       type: http
