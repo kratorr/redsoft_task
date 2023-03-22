@@ -23,6 +23,8 @@ class ClientViewSet(viewsets.GenericViewSet,
                     mixins.CreateModelMixin,
                     mixins.UpdateModelMixin
                     ):
+    """Methods for work with client"""
+
     authentication_classes = [JWTTokenUserAuthentication, ]
     permission_classes = [IsAuthenticated, ]
     parser_classes = [parsers.MultiPartParser, ]
@@ -55,6 +57,7 @@ class WeatherView(viewsets.ViewSet):
 
 
 class MemoryCheckView(viewsets.ViewSet):
+    """Get memory status"""
 
     authentication_classes = [JWTTokenUserAuthentication, ]
     permission_classes = [IsAuthenticated, ]
