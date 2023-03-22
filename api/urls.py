@@ -10,7 +10,7 @@ from api.views import ClientViewSet, WeatherView, MemoryCheckView
 
 router = DefaultRouter()
 router.register(r'client', ClientViewSet, basename='client')
-#router.register(r'weather', WeatherView, basename='weather')
+router.register(r'weather', WeatherView, basename='weather')
 router.register(r'memory', MemoryCheckView, basename='memory')
 
 urlpatterns = [

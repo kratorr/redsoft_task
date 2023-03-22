@@ -20,7 +20,7 @@ from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
 
 from api.models import Client
 from api.serializers import ClientSerializer, InputWeatherSerializer, WeatherSerializer
-
+from api.utils import get_weather
 
 
 class ClientViewSet(viewsets.GenericViewSet,
@@ -36,12 +36,12 @@ class ClientViewSet(viewsets.GenericViewSet,
     queryset = Client.objects.all()
 
 
-class WeatherView(APIView):
+class WeatherView(viewsets.ViewSet):
     """Get weather by city and date"""
 
     serializer_class = WeatherSerializer
-    authentication_classes = [JWTTokenUserAuthentication, ]
-    permission_classes = [IsAuthenticated, ]
+   # authentication_classes = [JWTTokenUserAuthentication, ]
+   # permission_classes = [IsAuthenticated, ]
 
     @extend_schema(
         parameters=[
@@ -49,30 +49,15 @@ class WeatherView(APIView):
            OpenApiParameter("date", OpenApiTypes.DATE, OpenApiParameter.QUERY),
         ],
     )
-    def get(self, request):
+    def list(self, request):
         input = InputWeatherSerializer(data=request.GET)
         input.is_valid(raise_exception=True)
 
-        api_url = "http://api.openweathermap.org/geo/1.0/direct?"
-        api_key = settings.OPENWEATHER_KEY
-
-        # Выполняем запрос к API, передавая необходимые параметры
-        response = requests.get(api_url, params={
-            "q": input.validated_data['city'],
-            "appid": api_key,
-            "start": input.validated_data['date'],
-            "cnt": 1,
-            "units": "metric"
-        })
-
-        print(response.text)
-
-        if response.status_code == 200:
-            response = response.json()
-        else:
-            response = 'Error to fetch weather'
-
-        return Response(response)
+        weather = get_weather(
+            input.validated_data['city'],
+            input.validated_data['date']
+        )
+        return Response(weather)
 
 
 class MemoryCheckView(viewsets.ViewSet):
@@ -80,8 +65,7 @@ class MemoryCheckView(viewsets.ViewSet):
     authentication_classes = [JWTTokenUserAuthentication, ]
     permission_classes = [IsAuthenticated, ]
 
-
     def list(self, request):
-        with open('./memory_status.json', 'r') as f:
+        with open(settings.MEMORY_STATUS_PATH, 'r') as f:
             memory_usage = json.load(f)
         return Response(memory_usage)
