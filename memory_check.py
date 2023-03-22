@@ -21,9 +21,9 @@ def memory_check():
 def main():
     while True:
         disk_usage = memory_check()
-        disk_usage.append(datetime.now().isoformat())
+        memory_status = {"last_update": datetime.now().isoformat(), "status": disk_usage}
         with open('memory_status.json', 'w') as f:
-            json.dump(disk_usage, f)
+            json.dump(memory_status, f)
         time.sleep(60)
 
 
