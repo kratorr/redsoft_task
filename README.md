@@ -20,3 +20,5 @@ docker run --rm -p 8000:8000 -d --name redsoft redsoft_task
 docker run --rm -p 8000:8000 -d --name redsoft kratorr/redsoft_task 
 ```
 Открыть swagger ui http://127.0.0.1:8000/api/schema/swagger-ui/
+
+В коде захардкожен api ключ к openweather, небоходимо будет вывести в переменные окружения
