@@ -4,6 +4,33 @@ info:
   version: 1.0.0
   description: Your project description
 paths:
+  /api-auth/signup/:
+    post:
+      operationId: api_auth_signup_create
+      tags:
+      - api-auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignUpRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/SignUpRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SignUpRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignUp'
+          description: ''
   /api-auth/token/:
     post:
       operationId: api_auth_token_create
@@ -58,14 +85,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/TokenRefresh'
           description: ''
-  /api/client/:
+  /api/v1/client/:
     get:
-      operationId: api_client_list
+      operationId: api_v1_client_list
       tags:
       - api
       security:
       - jwtAuth: []
-      - {}
       responses:
         '200':
           content:
@@ -76,7 +102,7 @@ paths:
                   $ref: '#/components/schemas/Client'
           description: ''
     post:
-      operationId: api_client_create
+      operationId: api_v1_client_create
       tags:
       - api
       requestBody:
@@ -87,7 +113,6 @@ paths:
         required: true
       security:
       - jwtAuth: []
-      - {}
       responses:
         '201':
           content:
@@ -95,9 +120,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/Client'
           description: ''
-  /api/client/{id}/:
+  /api/v1/client/{id}/:
     put:
-      operationId: api_client_update
+      operationId: api_v1_client_update
       parameters:
       - in: path
         name: id
@@ -115,7 +140,6 @@ paths:
         required: true
       security:
       - jwtAuth: []
-      - {}
       responses:
         '200':
           content:
@@ -124,7 +148,7 @@ paths:
                 $ref: '#/components/schemas/Client'
           description: ''
     patch:
-      operationId: api_client_partial_update
+      operationId: api_v1_client_partial_update
       parameters:
       - in: path
         name: id
@@ -141,7 +165,6 @@ paths:
               $ref: '#/components/schemas/PatchedClientRequest'
       security:
       - jwtAuth: []
-      - {}
       responses:
         '200':
           content:
@@ -150,7 +173,7 @@ paths:
                 $ref: '#/components/schemas/Client'
           description: ''
     delete:
-      operationId: api_client_destroy
+      operationId: api_v1_client_destroy
       parameters:
       - in: path
         name: id
@@ -162,13 +185,30 @@ paths:
       - api
       security:
       - jwtAuth: []
-      - {}
       responses:
         '204':
           description: No response body
-  /api/weather/:
+  /api/v1/memory/:
     get:
-      operationId: api_weather_retrieve
+      operationId: api_v1_memory_list
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: {}
+                  description: Unspecified response body
+          description: ''
+  /api/v1/weather/:
+    get:
+      operationId: api_v1_weather_list
       description: Get weather by city and date
       parameters:
       - in: query
@@ -184,13 +224,14 @@ paths:
       - api
       security:
       - jwtAuth: []
-      - {}
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Weather'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Weather'
           description: ''
 components:
   schemas:
@@ -212,13 +253,18 @@ components:
           type: string
           format: date
         photo:
-          $ref: '#/components/schemas/Photo'
+          type: string
+          format: uri
+        photo_url:
+          type: string
+          readOnly: true
       required:
       - birthday
       - first_name
       - id
       - last_name
       - photo
+      - photo_url
       - sex
     ClientRequest:
       type: object
@@ -237,7 +283,8 @@ components:
           type: string
           format: date
         photo:
-          $ref: '#/components/schemas/PhotoRequest'
+          type: string
+          format: binary
       required:
       - birthday
       - first_name
@@ -261,23 +308,8 @@ components:
           type: string
           format: date
         photo:
-          $ref: '#/components/schemas/PhotoRequest'
-    Photo:
-      type: object
-      properties:
-        image:
-          type: string
-          format: uri
-      required:
-      - image
-    PhotoRequest:
-      type: object
-      properties:
-        image:
           type: string
           format: binary
-      required:
-      - image
     SexEnum:
       enum:
       - M
@@ -286,6 +318,38 @@ components:
       description: |-
         * `M` - Male
         * `F` - Female
+    SignUp:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+      required:
+      - id
+      - username
+    SignUpRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          minLength: 1
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - password
+      - username
     TokenObtainPair:
       type: object
       properties:

@@ -58,6 +58,7 @@ class MemoryCheckView(viewsets.ViewSet):
 
     authentication_classes = [JWTTokenUserAuthentication, ]
     permission_classes = [IsAuthenticated, ]
+    serializer_class = []
 
     def list(self, request):
         with open(settings.MEMORY_STATUS_PATH, 'r') as f:
