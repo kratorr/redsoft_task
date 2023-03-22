@@ -1,25 +1,19 @@
-import requests
 import json
 
 
-import rest_framework.parsers as parsers
+from django.conf import settings
+
+from rest_framework import mixins, viewsets, parsers
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
 
 from drf_spectacular.openapi import OpenApiParameter, OpenApiTypes
 from drf_spectacular.utils import extend_schema
 
-from django.conf import settings
-
-from rest_framework import mixins
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework import viewsets
-
-
-from rest_framework_simplejwt.authentication import JWTTokenUserAuthentication
 
 from api.models import Client
-from api.serializers import ClientSerializer, InputWeatherSerializer, WeatherSerializer
+from api.serializers import (ClientSerializer, InputWeatherSerializer, WeatherSerializer)
 from api.utils import get_weather
 
 
@@ -31,7 +25,7 @@ class ClientViewSet(viewsets.GenericViewSet,
                     ):
     authentication_classes = [JWTTokenUserAuthentication, ]
     permission_classes = [IsAuthenticated, ]
-    parser_classes = [parsers.MultiPartParser]
+    parser_classes = [parsers.MultiPartParser, ]
     serializer_class = ClientSerializer
     queryset = Client.objects.all()
 
@@ -40,8 +34,8 @@ class WeatherView(viewsets.ViewSet):
     """Get weather by city and date"""
 
     serializer_class = WeatherSerializer
-   # authentication_classes = [JWTTokenUserAuthentication, ]
-   # permission_classes = [IsAuthenticated, ]
+    authentication_classes = [JWTTokenUserAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
 
     @extend_schema(
         parameters=[

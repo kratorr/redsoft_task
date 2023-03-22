@@ -9,7 +9,7 @@ def get_weather(city: str, date):
     api_key = settings.OPENWEATHER_KEY
     dt_object = datetime.datetime(date.year, date.month, date.day)
     headers = {'content-type': 'application/json'}
-    params={
+    params = {
         "q": city,
         "appid": api_key,
         "dt": int(dt_object.timestamp())

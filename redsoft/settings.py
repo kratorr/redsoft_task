@@ -40,8 +40,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'rest_framework',
     'rest_framework_simplejwt',
-   # 'drf_yasg',
-   'drf_spectacular',
+    'drf_spectacular',
 ]
 
 MIDDLEWARE = [
@@ -135,7 +134,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-OPENWEATHER_KEY='6f1d0516164122d113a3378830f9286b'
+OPENWEATHER_KEY = '6f1d0516164122d113a3378830f9286b'
+
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'API',
@@ -145,4 +145,4 @@ SPECTACULAR_SETTINGS = {
     'COMPONENT_SPLIT_REQUEST': True,
 }
 
-MEMORY_STATUS_PATH='./memory_status.json'
+MEMORY_STATUS_PATH = './memory_status.json'

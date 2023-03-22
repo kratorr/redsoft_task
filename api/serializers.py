@@ -1,6 +1,27 @@
 from django.core.exceptions import ValidationError
+from django.contrib.auth import get_user_model
+
 from rest_framework import serializers
+
 from api.models import Client, Photo
+
+UserModel = get_user_model()
+
+
+class SignUpSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    def create(self, validated_data):
+        user = UserModel.objects.create_user(
+            username=validated_data['username'],
+            password=validated_data['password'],
+        )
+
+        return user
+
+    class Meta:
+        model = UserModel
+        fields = ("id", "username", "password")
 
 
 def validate_file_size(value):
@@ -9,6 +30,7 @@ def validate_file_size(value):
         raise ValidationError("The maximum file size that can be uploaded is 5MB")
     else:
         return value
+
 
 class ClientSerializer(serializers.ModelSerializer):
     photo = serializers.ImageField(validators=[validate_file_size])
@@ -23,7 +45,7 @@ class ClientSerializer(serializers.ModelSerializer):
             'sex',
             'birthday',
             'photo',
-            'photo_url' 
+            'photo_url'
             ]
 
     def create(self, validated_data):
