@@ -1,22 +1,17 @@
+from django.core.exceptions import ValidationError
 from rest_framework import serializers
-
 from api.models import Client, Photo
 
 
-# class PhotoSerializer(serializers.ModelSerializer):
-#     image = serializers.ImageField()
-#     class Meta:
-#         model = Photo
-#         fields = ['image']
-
-#     # def validate_image(self, value):
-#     #     print("!!!!!!!!!!!!!!!!!!"* 5)
-#     #     if 'django' not in value.lower():
-#     #         raise serializers.ValidationError("Blog post is not about Django")
-#     #     return value
+def validate_file_size(value):
+    filesize = value.size
+    if filesize > 1024 * 5:  # 5Mb limit
+        raise ValidationError("The maximum file size that can be uploaded is 5MB")
+    else:
+        return value
 
 class ClientSerializer(serializers.ModelSerializer):
-    photo = serializers.ImageField()
+    photo = serializers.ImageField(validators=[validate_file_size])
     photo_url = serializers.SerializerMethodField()
 
     class Meta:
@@ -36,15 +31,6 @@ class ClientSerializer(serializers.ModelSerializer):
         photo_obj = Photo.objects.create(image=photo)
         instance = Client.objects.create(photo=photo_obj, **validated_data)
         return instance
-
-    def to_representation(self, instance):
-        request =  self.context.get('request')
-
-#        if request and request.method == 'GET':
-           
-#            self.fields.pop('photo')
-
-        return super().to_representation(instance)
 
     def get_photo_url(self, obj):
         request = self.context.get('request')
