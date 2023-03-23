@@ -8,22 +8,6 @@ from api.models import Client, Photo
 UserModel = get_user_model()
 
 
-class SignUpSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-
-    def create(self, validated_data):
-        user = UserModel.objects.create_user(
-            username=validated_data['username'],
-            password=validated_data['password'],
-        )
-
-        return user
-
-    class Meta:
-        model = UserModel
-        fields = ("id", "username", "password")
-
-
 def validate_file_size(value):
     filesize = value.size
     if filesize > 1024 * 5:  # 5Mb limit
