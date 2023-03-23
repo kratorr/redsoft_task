@@ -5,6 +5,7 @@ from rest_framework import serializers
 
 from api.models import Client, Photo
 
+
 UserModel = get_user_model()
 
 
@@ -43,11 +44,11 @@ class ClientSerializer(serializers.ModelSerializer):
         photo = Photo.objects.get(id=obj.photo.id)
         return request.build_absolute_uri(photo.image.url)
 
-    # def update(self, validated_data):
-    #     photo = validated_data.pop('photo')
-    #     photo_obj, _ = Photo.objects.get_or_404(**photo)
-    #     instance = Client.objects.update(photo=photo_obj, **validated_data)
-    #     return instance
+    def update(self, validated_data):
+        photo = validated_data.pop('photo')
+        photo_obj, _ = Photo.objects.get_or_404(image=photo)
+        instance = Client.objects.update(photo=photo_obj, **validated_data)
+        return instance
 
 
 class WeatherSerializer(serializers.Serializer):
