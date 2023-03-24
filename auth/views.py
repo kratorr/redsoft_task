@@ -2,7 +2,7 @@ from rest_framework import mixins, viewsets
 from rest_framework.permissions import AllowAny
 
 
-from api.serializers import SignUpSerializer
+from auth.serializers import SignUpSerializer
 
 
 class SignUpView(mixins.CreateModelMixin, viewsets.GenericViewSet):

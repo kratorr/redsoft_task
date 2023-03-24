@@ -11,14 +11,15 @@ UserModel = get_user_model()
 
 def validate_file_size(value):
     filesize = value.size
-    if filesize > 1024 * 5:  # 5Mb limit
+    print(value.size)
+    if filesize > 1024 * 1024 * 5:  # 5Mb limit
         raise ValidationError("The maximum file size that can be uploaded is 5MB")
     else:
         return value
 
 
 class ClientSerializer(serializers.ModelSerializer):
-    photo = serializers.ImageField(validators=[validate_file_size])
+    photo = serializers.ImageField(write_only=True, validators=[validate_file_size])
     photo_url = serializers.SerializerMethodField()
 
     class Meta:
