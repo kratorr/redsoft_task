@@ -25,9 +25,9 @@ class ClientViewSet(viewsets.GenericViewSet,
                     ):
     """Methods for work with client"""
 
-    authentication_classes = [JWTTokenUserAuthentication, ]
-    permission_classes = [IsAuthenticated, ]
-    parser_classes = [parsers.MultiPartParser, ]
+    #authentication_classes = [JWTTokenUserAuthentication,]
+    #permission_classes = [IsAuthenticated,]
+   # parser_classes = [parsers.MultiPartParser, ]
     serializer_class = ClientSerializer
     queryset = Client.objects.all()
 

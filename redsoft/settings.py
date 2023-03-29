@@ -150,3 +150,11 @@ SPECTACULAR_SETTINGS = {
 }
 
 MEMORY_STATUS_PATH = './memory_status.json'
+
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=120),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
