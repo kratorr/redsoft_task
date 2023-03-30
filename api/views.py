@@ -29,7 +29,7 @@ class ClientViewSet(viewsets.GenericViewSet,
     permission_classes = [IsAuthenticated, ]
     parser_classes = [parsers.MultiPartParser, ]
     serializer_class = ClientSerializer
-    queryset = Client.objects.all()
+    queryset = Client.objects.all().select_related('photo')
 
 
 class WeatherView(viewsets.ViewSet):

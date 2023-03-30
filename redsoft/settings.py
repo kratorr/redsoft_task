@@ -11,21 +11,27 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+from environs import Env
+from dotenv import load_dotenv
+
+load_dotenv()
+
+env = Env()
+env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+DEBUG = env.bool('DEBUG', default=False)
+
+SECRET_KEY = env.str('SECRET_KEY', default='YOU_MUST_CHANGE_IT')
+
+ALLOWED_HOSTS = []
+
+OPENWEATHER_KEY = env.str('OPENWEATHER_KEY', default='YOU_MUST_CHANGE_IT')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-069z_s^l7ji12)ake3-%_k$)3g$-^#kpwqccmegkuid3f^5-rh'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -134,8 +140,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-OPENWEATHER_KEY = '6f1d0516164122d113a3378830f9286b'
-
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'API',
@@ -146,3 +150,11 @@ SPECTACULAR_SETTINGS = {
 }
 
 MEMORY_STATUS_PATH = './memory_status.json'
+
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=120),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+}
