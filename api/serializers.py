@@ -11,7 +11,6 @@ UserModel = get_user_model()
 
 def validate_file_size(value):
     filesize = value.size
-    print(value.size)
     if filesize > 1024 * 1024 * 5:  # 5Mb limit
         raise ValidationError("The maximum file size that can be uploaded is 5MB")
     else:
@@ -34,8 +33,8 @@ class ClientSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         photo = validated_data.pop('photo')
-        photo_obj = Photo.objects.create(image=photo['image'])
-        instance = Client.objects.create(photo=photo_obj, **validated_data)
+        instance = Client.objects.create(**validated_data)
+        Photo.objects.create(image=photo['image'], client=instance)
         return instance
 
     def update(self, instance, validated_data, *args, **kwargs):
